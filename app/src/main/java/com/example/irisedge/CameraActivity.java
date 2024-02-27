@@ -19,9 +19,12 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.dnn.Dnn;
+import org.opencv.dnn.Net;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
@@ -58,6 +61,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity implements
         if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
         }
+
+
+
+
 
 
 
@@ -155,6 +162,30 @@ public class CameraActivity extends org.opencv.android.CameraActivity implements
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
+        String outputName = "output0";
+        double scaleFactor = 1/255.0;
+        Net net = Dnn.readNetFromONNX("best.onnx");
+        Mat blob = Dnn.blobFromImage(mRgba, scaleFactor, new Size(224, 224), new Scalar(0,0,0), false, false);
+        net.setInput(blob);
+        Mat detectionMat = net.forward(outputName);
+
+        for (int i = 0; i < detectionMat.rows(); i++) {
+            double confidence = detectionMat.get(i, 4)[0];
+            if (confidence > 0.5) {
+                // The bounding box coordinates are the first four values in the row
+                int centerX = (int) detectionMat.get(i, 0)[0];
+                int centerY = (int) detectionMat.get(i, 1)[0];
+                int width = (int) detectionMat.get(i, 2)[0];
+                int height = (int) detectionMat.get(i, 3)[0];
+
+                // Draw the bounding box
+                Point center = new Point(centerX, centerY);
+                int left = centerX - width / 2;
+                int top = centerY - height / 2;
+                Rect rect = new Rect(left, top, width, height);
+                Imgproc.rectangle(mRgba, rect.tl(), rect.br(), new Scalar(255, 0, 0), 2);
+            }
+        }
 
 
 
