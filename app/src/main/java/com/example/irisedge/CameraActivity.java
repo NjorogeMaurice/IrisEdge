@@ -162,13 +162,24 @@ public class CameraActivity extends org.opencv.android.CameraActivity implements
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
+//        Mat detectionMat = objectDetection();
+//        drawBoundingBoxes(mRgba, detectionMat);
+
+        return mRgba;
+    }
+
+    private Mat objectDetection(){
         String outputName = "output0";
         double scaleFactor = 1/255.0;
         Net net = Dnn.readNetFromONNX("best.onnx");
-        Mat blob = Dnn.blobFromImage(mRgba, scaleFactor, new Size(224, 224), new Scalar(0,0,0), false, false);
+        Mat blob, detectionMat = null;
+        blob = Dnn.blobFromImage(mRgba, scaleFactor, new Size(224, 224), new Scalar(0,0,0), false, false);
         net.setInput(blob);
-        Mat detectionMat = net.forward(outputName);
+        detectionMat = net.forward(outputName);
+        return detectionMat;
+    }
 
+    private void drawBoundingBoxes(Mat mat, Mat detectionMat){
         for (int i = 0; i < detectionMat.rows(); i++) {
             double confidence = detectionMat.get(i, 4)[0];
             if (confidence > 0.5) {
@@ -183,13 +194,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity implements
                 int left = centerX - width / 2;
                 int top = centerY - height / 2;
                 Rect rect = new Rect(left, top, width, height);
-                Imgproc.rectangle(mRgba, rect.tl(), rect.br(), new Scalar(255, 0, 0), 2);
+                Imgproc.rectangle(mat, rect.tl(), rect.br(), new Scalar(255, 0, 0), 2);
             }
         }
-
-
-
-
-        return mRgba;
     }
+
 }

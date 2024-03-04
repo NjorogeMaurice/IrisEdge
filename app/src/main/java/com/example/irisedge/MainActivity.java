@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -48,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView imgRecord;
     private TextView txtSpeech,txtFromPython;
-    private Button button, ttsButton, sendData;
+    private Button ttsButton, sendData;
+    private ExtendedFloatingActionButton button;
     private TextToSpeech toSpeech;
     String result;
 
@@ -78,18 +80,18 @@ public class MainActivity extends AppCompatActivity {
                 speech();
             }
         });
-        sendData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new SendDataTask().execute(txtSpeech.getText().toString());
-            }
-        });
-        ttsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTxtSpeech(txtFromPython.getText().toString());
-            }
-        });
+//        sendData.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new SendDataTask().execute(txtSpeech.getText().toString());
+//            }
+//        });
+//        ttsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setTxtSpeech(txtFromPython.getText().toString());
+//            }
+//        });
 
 
 
@@ -209,9 +211,9 @@ private class SendDataTask extends AsyncTask<String, Void, String>{
         button = findViewById(R.id.btnTakePicture);
         imgRecord = findViewById(R.id.imgRecord);
         txtSpeech = findViewById(R.id.txtSpeech);
-        ttsButton = findViewById(R.id.btnTTS);
-        txtFromPython = findViewById(R.id.txtFromPython);
-        sendData = findViewById(R.id.btnSendData);
+//        ttsButton = findViewById(R.id.btnTTS);
+//        txtFromPython = findViewById(R.id.txtFromPython);
+//        sendData = findViewById(R.id.btnSendData);
     }
 
 }
