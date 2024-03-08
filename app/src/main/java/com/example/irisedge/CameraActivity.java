@@ -171,7 +171,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity implements
     private Mat objectDetection(){
         String outputName = "output0";
         double scaleFactor = 1/255.0;
-        Net net = Dnn.readNetFromONNX("best.onnx");
+        Net net = Dnn.readNetFromONNX("C:\\Users\\Moss\\Desktop\\best.onnx");
         Mat blob, detectionMat = null;
         blob = Dnn.blobFromImage(mRgba, scaleFactor, new Size(224, 224), new Scalar(0,0,0), false, false);
         net.setInput(blob);
@@ -197,6 +197,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity implements
                 Imgproc.rectangle(mat, rect.tl(), rect.br(), new Scalar(255, 0, 0), 2);
             }
         }
+    }
+    private void detectObjects(){
+
     }
 
 }
